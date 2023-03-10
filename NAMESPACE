@@ -2,3 +2,4 @@
 
 export(dewp2)
 export(dewp3)
+export(ewp_reg)
