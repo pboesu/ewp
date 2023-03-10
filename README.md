@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/pboesu/ewp/workflows/R-CMD-check/badge.svg)](https://github.com/pboesu/ewp/actions)
+[![R-CMD-check](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of ewp is to …
