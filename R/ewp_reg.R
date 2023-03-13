@@ -17,6 +17,7 @@ ewp_reg <- function(formula, family = 'ewp3', data){
   start_values <- coef(glm(formula = formula, data = data, family = poisson))
   #add dispersion parameter start values
   start_values = c(start_values, beta1 = 0, beta2 = 0)
+  print('start values are: \n')
   print(start_values)
 
   pllik3 <- function(par, mm, X){
@@ -32,9 +33,9 @@ ewp_reg <- function(formula, family = 'ewp3', data){
 
   resultp3 <- optim(par = start_values,
                     fn = pllik3, mm = mm, X = X,
-                    method = 'L-BFGS-B',
+                    method = 'BFGS',
                     hessian = TRUE,
-                    control = list(trace = 1))
+                    control = list(trace = 1,REPORT=2))
   return(resultp3)
 }
 
