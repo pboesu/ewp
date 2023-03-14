@@ -10,7 +10,7 @@
 #' @return
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE){
   mm <- model.matrix(formula, data)
   mf <- model.frame(formula, data)
   X <- model.response(mf, "numeric")
@@ -36,10 +36,14 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE){
 
   resultp3 <- optim(par = start_values,
                     fn = pllik3, mm = mm, X = X,
-                    method = 'BFGS',
-                    hessian = TRUE,
-                    control = list(trace = 1,REPORT=2*verbose))
+                    method = method,
+                    hessian = FALSE,
+                    control = list(trace = verbose,REPORT=2*verbose,ndeps=rep(1e-5, ncol(mm)+2)))
 
+  if(hessian){
+    if(verbose) cat('\nCalculating Hessian. This may take a while.\n')
+    resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, X = X)
+  }
   #estimate vcov
   vc = solve(resultp3$hessian)
 
@@ -195,7 +199,7 @@ print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
 
     cat(paste("\nlambda coefficients (", dist, " with log link):\n", sep = ""))
     printCoefmat(x$coefficients[1:npar_lambda,], digits = digits, ...)
-    cat(paste("\ndispersion coefficients "))
+    cat(paste("\ndispersion coefficients:\n"))
     printCoefmat(x$coefficients[(npar_lambda+1):(npar_lambda+2),], digits = digits, ...)
 
     cat(paste("\nNumber of iterations in", x$method, "optimization:", x$iterations, "\n"))
