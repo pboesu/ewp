@@ -5,11 +5,12 @@
 #' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #' @param family choice of "ewp2" or "ewp3"
 #' @param data a data frame containing the variables in the model.
+#' @param verbose logical, defaults to TRUE; print model fitting progress
 #'
 #' @return
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE){
   mm <- model.matrix(formula, data)
   mf <- model.frame(formula, data)
   X <- model.response(mf, "numeric")
@@ -17,8 +18,10 @@ ewp_reg <- function(formula, family = 'ewp3', data){
   start_values <- coef(glm(formula = formula, data = data, family = poisson))
   #add dispersion parameter start values
   start_values = c(start_values, beta1 = 0, beta2 = 0)
-  print('start values are: \n')
-  print(start_values)
+  if(verbose){
+    cat('start values are: \n')
+    print(start_values)
+  }
 
   pllik3 <- function(par, mm, X){
     lambda = exp(mm %*% par[1:ncol(mm)])
@@ -35,8 +38,171 @@ ewp_reg <- function(formula, family = 'ewp3', data){
                     fn = pllik3, mm = mm, X = X,
                     method = 'BFGS',
                     hessian = TRUE,
-                    control = list(trace = 1,REPORT=2))
-  return(resultp3)
+                    control = list(trace = 1,REPORT=2*verbose))
+
+  #estimate vcov
+  vc = solve(resultp3$hessian)
+
+  #TODO: rename coefficients to highlight lambda linpred? and/or separate mean and dispersion coefficients in output
+
+  #output structure
+  out <- list(
+    coefficients = resultp3$par,
+    vcov = vc,
+    se = sqrt(diag(vc)),
+    optim = resultp3,
+    loglik = -resultp3$value,
+    residuals = NA,
+    fitted.values = NA,
+    start = start_values,
+    n = length(X),
+    df.residual = length(X) - ncol(mm) - 2,
+    converged = resultp3$convergence < 1,
+    formula = formula,
+    dist= 'ewp3'
+  )
+  class(out) <- "ewp"
+  return(out)
+}
+
+#' Extract coefficients
+#'
+#' @param object an object of class ewp
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+coef.ewp <- function(object, ...) {
+  object$coefficients
+}
+
+#' Extract estimated variance-covariance matrix
+#'
+#' @param object an object of class ewp
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+vcov.ewp <- function(object, ...) {
+  object$vcov
+}
+
+#' Extract log likelihood
+#'
+#' @param object an object of class ewp
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+logLik.ewp <- function(object, ...) {
+  structure(object$loglik, df = object$n - object$df.residual, nobs = object$n, class = "logLik")
+}
+
+
+#' Print ewp model object
+#'
+#' @param x ewp model object
+#' @param digits digits to print
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
+{
+    dist <- x$dist
+    fixed <- FALSE
+
+  #cat("\nCall:", deparse(x$call, width.cutoff = floor(getOption("width") * 0.85)), "", sep = "\n")
+
+  if(!x$converged) {
+    cat("model did not converge\n")
+      } else {
+    cat(paste("Coefficients (", dist, " with log link on lambda):\n", sep = ""))
+    print.default(format(x$coefficients, digits = digits), print.gap = 2, quote = FALSE)
+    cat("\n")
+    }
+
+  invisible(x)
+}
+
+#' Model summary
+#'
+#' @param object ewp model fit
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+summary.ewp <- function(object,...)
+{
+  ## deviance residuals
+  #object$residuals <- residuals(object, type = "deviance")
+
+  ## compute z statistics
+  cf <- object$coefficients
+  se <- sqrt(diag(object$vcov))
+  k <- length(cf)
+
+
+  zstat <- cf/se
+  pval <- 2*pnorm(-abs(zstat))
+  cf <- cbind(cf, se, zstat, pval)
+  colnames(cf) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+  object$coefficients <- cf
+
+  ## number of iterations
+  object$iterations <- tail(na.omit(object$optim$count), 1)
+
+  ## delete some slots
+  object$fitted.values <- object$terms <- object$model <- object$y <-
+    object$x <- object$levels <- object$contrasts <- object$start <- NULL
+
+  ## return
+  class(object) <- "summary.ewp"
+  object
+}
+
+#' Print ewp model summary
+#'
+#' @param x ewp model summary
+#' @param digits number of digits to print
+#' @param ... additional arguments to printCoefmat()
+#'
+#' @return
+#' @export
+#'
+print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
+{
+  #cat("\nCall:", deparse(x$call, width.cutoff = floor(getOption("width") * 0.85)), "", sep = "\n")
+
+  if(!x$converged) {
+    cat("model did not converge\n")
+  } else {
+
+
+      dist <- x$dist
+      fixed <- FALSE
+      npar_lambda <- nrow(x$coefficients) - 2
+
+
+    cat("Deviance residuals:\n")
+    #print(structure(quantile(x$residuals),
+    #                names = c("Min", "1Q", "Median", "3Q", "Max")), digits = digits, ...)
+
+    cat(paste("\nlambda coefficients (", dist, " with log link):\n", sep = ""))
+    printCoefmat(x$coefficients[1:npar_lambda,], digits = digits, ...)
+    cat(paste("\ndispersion coefficients "))
+    printCoefmat(x$coefficients[(npar_lambda+1):(npar_lambda+2),], digits = digits, ...)
+
+    cat(paste("\nNumber of iterations in", x$method, "optimization:", x$iterations, "\n"))
+    cat("Log-likelihood:", formatC(x$loglik, digits = digits), "on", x$n - x$df.residual, "Df\n")
+  }
+
+  invisible(x)
 }
 
 

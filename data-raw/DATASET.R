@@ -16,3 +16,17 @@ linnet$cov2 <- linnet$eggs + rnorm(n = nrow(linnet))
 
 
 usethis::use_data(linnet, overwrite = TRUE)
+
+# #read in pied flycatcher data
+# library(dplyr)
+# piedfly <- readRDS('data-raw/piefl.rds') %>%
+#   select(max_num_eggs, min_first_egg, yearf,northing) %>%
+#   mutate(northing_scl = scale(northing)[,1])
+#
+#
+# summary(piedfly)
+#
+# m1<-glm(max_num_eggs~min_first_egg + yearf + northing_scl, family = poisson, data = piedfly)
+# summary(m1)
+#
+# usethis::use_data(piedfly, overwrite = TRUE)
