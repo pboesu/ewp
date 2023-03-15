@@ -20,37 +20,41 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of ewp is to ...
+The goal of ewp is to provide a modelling interface for underdispersed count data based on the exponentially weighted Poisson (EWP) distribution described by Ridout & Besbeas (2004), allowing for nest-level covariates on the location parameter $\lambda$ of the EWP. Currently only the three-parameter version of the distribution (EWP_3) is implemented.
 
 ## Installation
 
-You can install the development version of ewp like so:
+You can install the development version of ewp directly from github like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github('pboesu/ewp')
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The package contains a reconstructed version of the linnet dataset from Ridout & Besbeas (2004), which consists of 5414 clutch size records and is augmented with two synthetic covariates, one that is random noise, and one that is correlated with clutch size. The parameter estimates for the intercept-only model presented in Ridout & Besbeas (2004) can be reproduced like so:
 
-```{r example}
+```{r model1}
 library(ewp)
-## basic example code
+fit_null <- ewp_reg(eggs ~ 1, data = linnet)
+summary(fit_null)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Note that the linear predictor on $lambda$ uses a log-link.
 
-```{r cars}
-summary(cars)
+A model with nest-level covariates can be fitted by specifying a more complex model formula - as in the base R `glm()`
+
+```{r model2}
+fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)
+summary(fit_null)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
+:warning: 
+**Note that the maximum likelihood optimisation procedure is still experimental**
 
-You can also embed plots, for example:
+In particular: 
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
+- Fitting is very slow (think minutes, not seconds), especially when estimating the Hessian matrix for more than a couple of parameters (think hours, not minutes)!
+- Estimates may not be stable results for models with many covariates and/or very large sample sizes (1000s)
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+:warning:

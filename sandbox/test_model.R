@@ -1,4 +1,9 @@
+library(ewp)
 system.time(fit_null <- ewp_reg(eggs ~ 1, data = linnet))
+print(fit_null)
+summary(fit_null)
+
+
 system.time(fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet))
 cbind(fit$coefficients, fit$se)
 print(fit)
@@ -18,5 +23,5 @@ piedfly_s <- piedfly %>%
   group_by(yearf) %>%
   slice_sample(n = 200)
 
-system.time(m2 <- ewp_reg(max_num_eggs~min_first_egg + yearf + northing_scl, data = piedfly_s))#very slow - converges within ~10 minutes, but hessian calculation does not wrap up for at least a further 60 minutes - aborted at 5000 secs
-system.time(m3 <- ewp_reg(max_num_eggs~min_first_egg + northing_scl, data = piedfly_s))#hessian slowdown (unsurprisingly) caused by year factors - optimisation may not be stable for large sample sizes - maybe to do with parscale - maybe try Nelder-Mead instead?
+system.time(m2 <- ewp_reg(max_num_eggs~min_first_egg + yearf + northing_scl, data = piedfly_s, hessian = FALSE))#very slow - converges within ~10 minutes, but hessian calculation does not wrap up for at least a further 60 minutes - aborted at 5000 secs
+system.time(m3 <- ewp_reg(max_num_eggs~min_first_egg + northing_scl, data = piedfly_s, hessian = FALSE))#hessian slowdown (unsurprisingly) caused by year factors - optimisation may not be stable for large sample sizes - maybe to do with parscale - maybe try Nelder-Mead instead?

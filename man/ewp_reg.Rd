@@ -4,7 +4,14 @@
 \alias{ewp_reg}
 \title{Exponentially weighted poisson regression model}
 \usage{
-ewp_reg(formula, family = "ewp3", data, verbose = TRUE)
+ewp_reg(
+  formula,
+  family = "ewp3",
+  data,
+  verbose = TRUE,
+  method = "BFGS",
+  hessian = TRUE
+)
 }
 \arguments{
 \item{formula}{an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.}
@@ -14,6 +21,8 @@ ewp_reg(formula, family = "ewp3", data, verbose = TRUE)
 \item{data}{a data frame containing the variables in the model.}
 
 \item{verbose}{logical, defaults to TRUE; print model fitting progress}
+
+\item{hessian}{logical, defaults to TRUE; calculate Hessian?}
 }
 \value{
 

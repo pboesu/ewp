@@ -6,6 +6,7 @@
 #' @param family choice of "ewp2" or "ewp3"
 #' @param data a data frame containing the variables in the model.
 #' @param verbose logical, defaults to TRUE; print model fitting progress
+#' @param hessian logical, defaults to TRUE; calculate Hessian?
 #'
 #' @return
 #' @export
@@ -198,7 +199,7 @@ print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
     #                names = c("Min", "1Q", "Median", "3Q", "Max")), digits = digits, ...)
 
     cat(paste("\nlambda coefficients (", dist, " with log link):\n", sep = ""))
-    printCoefmat(x$coefficients[1:npar_lambda,], digits = digits, ...)
+    printCoefmat(x$coefficients[1:npar_lambda, , drop = FALSE], digits = digits, ...)
     cat(paste("\ndispersion coefficients:\n"))
     printCoefmat(x$coefficients[(npar_lambda+1):(npar_lambda+2),], digits = digits, ...)
 
