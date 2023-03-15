@@ -44,9 +44,11 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
   if(hessian){
     if(verbose) cat('\nCalculating Hessian. This may take a while.\n')
     resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, X = X)
+    #estimate vcov
+    vc = solve(resultp3$hessian)
+  } else {
+    vc <- resultp3$hessian <- NA_real_
   }
-  #estimate vcov
-  vc = solve(resultp3$hessian)
 
   #TODO: rename coefficients to highlight lambda linpred? and/or separate mean and dispersion coefficients in output
 
@@ -54,7 +56,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
   out <- list(
     coefficients = resultp3$par,
     vcov = vc,
-    se = sqrt(diag(vc)),
+    se = ifelse(hessian, sqrt(diag(vc)), NA_real_),
     optim = resultp3,
     loglik = -resultp3$value,
     residuals = NA,
@@ -113,7 +115,6 @@ logLik.ewp <- function(object, ...) {
 #' @param digits digits to print
 #' @param ... ignored
 #'
-#' @return
 #' @export
 #'
 print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
@@ -139,7 +140,6 @@ print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
 #' @param object ewp model fit
 #' @param ... ignored
 #'
-#' @return
 #' @export
 #'
 summary.ewp <- function(object,...)

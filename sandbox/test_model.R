@@ -12,6 +12,7 @@ print(summary(fit))
 
 system.time(fitNM <- ewp_reg(eggs ~ cov1 + cov2, data = linnet, method='Nelder-Mead'))
 
+library(dplyr)
 piedfly <- readRDS('../../2023_exponentially_weighted_poisson/data/piefl.rds') %>%
      select(max_num_eggs, min_first_egg, yearf,northing) %>%
      mutate(northing_scl = scale(northing)[,1])

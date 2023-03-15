@@ -36,7 +36,7 @@ The package contains a reconstructed version of the linnet dataset from Ridout &
 
 ```{r model1}
 library(ewp)
-fit_null <- ewp_reg(eggs ~ 1, data = linnet)
+fit_null <- ewp_reg(eggs ~ 1, data = linnet)# this takes 1-2 minutes
 summary(fit_null)
 ```
 
@@ -45,7 +45,7 @@ Note that the linear predictor on $lambda$ uses a log-link.
 A model with nest-level covariates can be fitted by specifying a more complex model formula - as in the base R `glm()`
 
 ```{r model2}
-fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)
+fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)# this takes 2-5 minutes
 summary(fit_null)
 ```
 
