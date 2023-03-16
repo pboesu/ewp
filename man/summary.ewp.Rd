@@ -11,9 +11,6 @@
 
 \item{...}{ignored}
 }
-\value{
-
-}
 \description{
 Model summary
 }

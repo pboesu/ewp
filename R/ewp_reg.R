@@ -7,16 +7,24 @@
 #' @param data a data frame containing the variables in the model.
 #' @param verbose logical, defaults to TRUE; print model fitting progress
 #' @param hessian logical, defaults to TRUE; calculate Hessian?
+#' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
+#' @param maxiter numeric maximum number of iterations for optim
 #'
 #' @return
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
   mm <- model.matrix(formula, data)
   mf <- model.frame(formula, data)
   X <- model.response(mf, "numeric")
   #get start values for lambda linpred from simple poisson regression
   start_values <- coef(glm(formula = formula, data = data, family = poisson))
+  #estimate relative effect sizes for optim - assumes dispersion parameter is approx 1!
+  if (autoscale) {
+     parscale_est = abs(c(start_values, beta1 = 1, beta2 = 1)/start_values[1])
+  } else {
+     parscale_est = rep(1, length(start_values)+2)
+    }
   #add dispersion parameter start values
   start_values = c(start_values, beta1 = 0, beta2 = 0)
   if(verbose){
@@ -28,18 +36,23 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     lambda = exp(mm %*% par[1:ncol(mm)])
     beta1 = unname(par['beta1'])
     beta2 = unname(par['beta2'])
-    ll = numeric(nrow(mm))
-    for (i in 1:nrow(mm)){
-      ll[i] = log(dewp3(X[i],lambda[i],beta1,beta2))
-    }
-    return(-1*sum(ll))
+    #ll = numeric(nrow(mm))
+    #for (i in 1:nrow(mm)){
+    #  ll[i] = log(dewp3_cpp(X[i],lambda[i],beta1,beta2))
+    #}
+    #return(-1*sum(ll))
+    return(pllik3_part_cpp(X, lambda, beta1, beta2))
   }
 
   resultp3 <- optim(par = start_values,
                     fn = pllik3, mm = mm, X = X,
                     method = method,
                     hessian = FALSE,
-                    control = list(trace = verbose,REPORT=2*verbose,ndeps=rep(1e-5, ncol(mm)+2)))
+                    control = list(trace = verbose,
+                                   REPORT=4*verbose,
+                                   ndeps=rep(1e-5, ncol(mm)+2),
+                                   parscale = parscale_est,
+                                   maxit = maxiter))
 
   if(hessian){
     if(verbose) cat('\nCalculating Hessian. This may take a while.\n')

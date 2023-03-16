@@ -48,7 +48,7 @@ dewp2 <- function(x, lambda, beta){
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
 #'
-#' @return
+#' @return a probability mass
 #' @export
 #'
 dewp3 <- function(x, lambda, beta1, beta2){

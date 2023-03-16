@@ -13,9 +13,6 @@
 
 \item{...}{ignored}
 }
-\value{
-
-}
 \description{
 Print ewp model object
 }
