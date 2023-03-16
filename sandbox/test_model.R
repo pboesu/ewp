@@ -29,7 +29,7 @@ summary(m1)
 
 piedfly_s <- piedfly %>%
   group_by(yearf) %>%
-  slice_sample(n = 50)
+  slice_sample(n = 200)
 
 system.time(m2 <- ewp_reg(max_num_eggs~min_first_egg_scl + yearf + northing_scl, data = piedfly_s, hessian = FALSE))#very slow - does not converge in 100 iterations / 42 minutes
 system.time(m2b <- ewp_reg(max_num_eggs~min_first_egg_scl + yearf + northing_scl, data = piedfly_s, hessian = T))
