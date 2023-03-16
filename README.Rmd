@@ -17,14 +17,13 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/pboesu/ewp/workflows/R-CMD-check/badge.svg)](https://github.com/pboesu/ewp/actions)
-[![R-CMD-check](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pboesu/ewp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of ewp is to provide a modelling interface for underdispersed count data based on the exponentially weighted Poisson (EWP) distribution described by Ridout & Besbeas (2004), allowing for nest-level covariates on the location parameter $\lambda$ of the EWP. Currently only the three-parameter version of the distribution (EWP_3) is implemented.
 
 ## Installation
 
-You can install the development version of ewp directly from github like so:
+You can install the development version of ewp directly from github like so (requires a working C++ compiler toolchain):
 
 ``` r
 remotes::install_github('pboesu/ewp')
@@ -36,16 +35,16 @@ The package contains a reconstructed version of the linnet dataset from Ridout &
 
 ```{r model1}
 library(ewp)
-fit_null <- ewp_reg(eggs ~ 1, data = linnet)# this takes 1-2 minutes
+fit_null <- ewp_reg(eggs ~ 1, data = linnet)# this may take a few seconds
 summary(fit_null)
 ```
 
-Note that the linear predictor on $lambda$ uses a log-link.
+Note that the linear predictor on $\lambda$ uses a log-link.
 
 A model with nest-level covariates can be fitted by specifying a more complex model formula - as in the base R `glm()`
 
 ```{r model2}
-fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)# this takes 2-5 minutes
+fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)# this may take 5-10 seconds
 summary(fit_null)
 ```
 
@@ -54,7 +53,7 @@ summary(fit_null)
 
 In particular: 
 
-- Fitting is very slow (think minutes, not seconds), especially when estimating the Hessian matrix for more than a couple of parameters (think hours, not minutes)!
-- Estimates may not be stable results for models with many covariates and/or very large sample sizes (1000s)
+- Fitting is very slow (think minutes, not seconds), especially when estimating the Hessian matrix for more than a couple of parameters!
+- Estimates may not be stable for models with many covariates and/or very large sample sizes (1000s). centering and scaling continuous covariates seems to help on that front.
 
 :warning:
