@@ -24,6 +24,8 @@ ewp_reg(
 
 \item{verbose}{logical, defaults to TRUE; print model fitting progress}
 
+\item{method}{string, passed to optim, defaults to 'BFGS'}
+
 \item{hessian}{logical, defaults to TRUE; calculate Hessian?}
 
 \item{autoscale}{logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.}

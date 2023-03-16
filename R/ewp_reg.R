@@ -6,6 +6,7 @@
 #' @param family choice of "ewp2" or "ewp3"
 #' @param data a data frame containing the variables in the model.
 #' @param verbose logical, defaults to TRUE; print model fitting progress
+#' @param method string, passed to optim, defaults to 'BFGS'
 #' @param hessian logical, defaults to TRUE; calculate Hessian?
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
 #' @param maxiter numeric maximum number of iterations for optim
