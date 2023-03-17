@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/pboesu/ewp/workflows/R-CMD-check/badge.svg)](https://github.com/pboesu/ewp/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/pboesu/ewp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/pboesu/ewp?branch=main)
 <!-- badges: end -->
 
 The goal of ewp is to provide a modelling interface for underdispersed

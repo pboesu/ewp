@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/pboesu/ewp/workflows/R-CMD-check/badge.svg)](https://github.com/pboesu/ewp/actions)
+[![Codecov test coverage](https://codecov.io/gh/pboesu/ewp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/pboesu/ewp?branch=main)
 <!-- badges: end -->
 
 The goal of ewp is to provide a modelling interface for underdispersed count data based on the exponentially weighted Poisson (EWP) distribution described by Ridout & Besbeas (2004), allowing for nest-level covariates on the location parameter $\lambda$ of the EWP. Currently only the three-parameter version of the distribution (EWP_3) is implemented.
