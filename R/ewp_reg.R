@@ -15,11 +15,11 @@
 #' @export
 #'
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
-  mm <- model.matrix(formula, data)
-  mf <- model.frame(formula, data)
+  mf <- model.frame(formula, data, drop.unused.levels = TRUE)
+  mm <- model.matrix(formula, mf)#TODO: drop NAs and unused factor levels!
   X <- model.response(mf, "numeric")
   #get start values for lambda linpred from simple poisson regression
-  start_values <- coef(glm(formula = formula, data = data, family = poisson))
+  start_values <- coef(glm(formula = formula, data = mf, family = poisson))
   #estimate relative effect sizes for optim - assumes dispersion parameter is approx 1!
   if (autoscale) {
      parscale_est = abs(c(start_values, beta1 = 1, beta2 = 1)/start_values[1])
