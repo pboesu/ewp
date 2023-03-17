@@ -93,24 +93,26 @@ fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)# this may take 5-10 seconds
 #> converged
 #> 
 #> Calculating Hessian. This may take a while.
-summary(fit_null)
+summary(fit)
 #> Deviance residuals:
 #> 
 #> lambda coefficients (ewp3 with log link):
-#>             Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) 1.584650   0.003511   451.3   <2e-16 ***
+#>               Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)  1.3335734  0.0048514 274.883   <2e-16 ***
+#> cov1        -0.0007823  0.0014025  -0.558    0.577    
+#> cov2         0.0532956  0.0009553  55.791   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> dispersion coefficients:
 #>       Estimate Std. Error z value Pr(>|z|)    
-#> beta1  1.46441    0.05588   26.21   <2e-16 ***
-#> beta2  2.35681    0.05607   42.04   <2e-16 ***
+#> beta1  1.89858    0.04404   43.11   <2e-16 ***
+#> beta2  3.05108    0.08761   34.83   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Number of iterations in  optimization: 11 
-#> Log-likelihood: -5299 on 3 Df
+#> Number of iterations in  optimization: 20 
+#> Log-likelihood: -4420 on 5 Df
 ```
 
 :warning: **Note that the maximum likelihood optimisation procedure is

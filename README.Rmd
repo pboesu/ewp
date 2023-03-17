@@ -46,7 +46,7 @@ A model with nest-level covariates can be fitted by specifying a more complex mo
 
 ```{r model2}
 fit <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)# this may take 5-10 seconds
-summary(fit_null)
+summary(fit)
 ```
 
 :warning: 
