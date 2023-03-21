@@ -15,6 +15,14 @@ print(fit)
 summary(fit)
 print(summary(fit))
 
+plot(linnet$eggs,predict(fit))
+abline(0,1, col = 'red')
+plot(linnet$eggs,fit$residuals)
+
+plot(linnet$eggs,predict(fit_null))
+abline(0,1, col = 'red')
+plot(linnet$eggs,fit_null$residuals)
+
 system.time(fitNM <- ewp_reg(eggs ~ cov1 + cov2, data = linnet, method='Nelder-Mead'))
 print(fitNM)
 

@@ -9,7 +9,7 @@ W_inner = function(beta, k, lambda){
   exp(-lambda)*lambda^k*w_k(beta, k, lambda)/factorial(k)
 }
 
-W = function(beta, lambda, sum_limit = 30){
+W = function(beta, lambda, sum_limit = 30){#TODO:
   sum(W_inner(beta,0:sum_limit,lambda))
 }
 
@@ -54,4 +54,21 @@ dewp2 <- function(x, lambda, beta){
 dewp3 <- function(x, lambda, beta1, beta2){
   stopifnot(is.wholenumber(x))
   exp(-lambda)*lambda^x*w_k3(beta1, beta2, k=x, lambda)/(W3(beta1, beta2, lambda)*factorial(x))
+}
+
+#' Random samples from the three-parameter EWP
+#'
+#' @param n number of observations
+#' @param lambda centrality parameter
+#' @param beta1 lower-tail dispersion parameter
+#' @param beta2 upper tail dispersion parameter
+#' @param sum_limit largest integer to evaluate the PMF sum for ()
+#'
+#' @return random deviates from the EWP_3 distribution
+#' @export
+#'
+rewp3 <- function(n, lambda, beta1, beta2, sum_limit = 30){#TODO:sum_limit should be a package option, and also there should be some way of automatically ensuring this is appropriate based on lambda and/or input data
+    if(lambda >= sum_limit) stop('sum_limit must be larger than lambda')
+    probs <- vapply(1:sum_limit, dewp3_cpp, numeric(1), lambda, beta1, beta2)
+    sample(x = 1:sum_limit, n, replace = T, prob = probs)
 }

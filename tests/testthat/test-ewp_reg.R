@@ -8,6 +8,11 @@ test_that("null model runthrough", {
   expect_equal(exp(coefs[1]),4.88,tolerance=0.017)
   expect_equal(coefs[2],1.46,tolerance=0.056)
   expect_equal(coefs[3],2.36,tolerance=0.056)
+  #test that predict and fitted are non-empty
+  expect_false(any(is.na(fit_null$fitted)))
+  expect_equal(length(fit_null$fitted), fit_null$n)
+  expect_false(any(is.na(predict(fit_null))))
+  expect_equal(length(predict(fit_null)), fit_null$n)
   })
 
 test_that("NA handling and dropped levels", {
@@ -19,3 +24,4 @@ test_that("NA handling and dropped levels", {
   fit_na <- ewp_reg(eggs ~ arbfac, data = linnet2)
   expect_s3_class(fit_na, "ewp")
 })
+

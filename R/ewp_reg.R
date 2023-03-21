@@ -15,9 +15,23 @@
 #' @export
 #'
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
-  mf <- model.frame(formula, data, drop.unused.levels = TRUE)
+  cl <- match.call()
+  mt <- terms(formula, data = data)
+  if(missing(data)) data <- environment(formula)
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", "na.action", "weights", "offset"), names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+
+  ## call model.frame()
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+
+  ## model matrix, response
   mm <- model.matrix(formula, mf)#TODO: drop NAs and unused factor levels!
-  X <- model.response(mf, "numeric")
+  Y <- model.response(mf, "numeric")
+
+
   #get start values for lambda linpred from simple poisson regression
   start_values <- coef(glm(formula = formula, data = mf, family = poisson))
   #estimate relative effect sizes for optim - assumes dispersion parameter is approx 1!
@@ -33,20 +47,20 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     print(start_values)
   }
 
-  pllik3 <- function(par, mm, X){
+  pllik3 <- function(par, mm, Y){
     lambda = exp(mm %*% par[1:ncol(mm)])
     beta1 = unname(par['beta1'])
     beta2 = unname(par['beta2'])
     #ll = numeric(nrow(mm))
     #for (i in 1:nrow(mm)){
-    #  ll[i] = log(dewp3_cpp(X[i],lambda[i],beta1,beta2))
+    #  ll[i] = log(dewp3_cpp(Y[i],lambda[i],beta1,beta2))
     #}
     #return(-1*sum(ll))
-    return(pllik3_part_cpp(X, lambda, beta1, beta2))
+    return(pllik3_part_cpp(Y, lambda, beta1, beta2))
   }
 
   resultp3 <- optim(par = start_values,
-                    fn = pllik3, mm = mm, X = X,
+                    fn = pllik3, mm = mm, Y = Y,
                     method = method,
                     hessian = FALSE,
                     control = list(trace = verbose,
@@ -57,27 +71,35 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
 
   if(hessian){
     if(verbose) cat('\nCalculating Hessian. This may take a while.\n')
-    resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, X = X)
+    resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, Y = Y)
     #estimate vcov
     vc = solve(resultp3$hessian)
   } else {
-    vc <- resultp3$hessian <- NA_real_
+    vc <- resultp3$hessian <- matrix(NA_real_, nrow = ncol(mm) + 2, ncol = ncol(mm) + 2)
   }
 
+
   #TODO: rename coefficients to highlight lambda linpred? and/or separate mean and dispersion coefficients in output
+
+  ## fitted and residuals
+  Yhat = exp(mm %*% resultp3$par[1:ncol(mm)])
+  res <- (Y - Yhat)
 
   #output structure
   out <- list(
     coefficients = resultp3$par,
     vcov = vc,
-    se = ifelse(hessian, sqrt(diag(vc)), NA_real_),
+    se = sqrt(diag(vc)),
     optim = resultp3,
     loglik = -resultp3$value,
-    residuals = NA,
-    fitted.values = NA,
+    residuals = res,
+    fitted.values = Yhat,
+    terms = mt,
+    call = cl,
+    levels = .getXlevels(mt, mf),
     start = start_values,
-    n = length(X),
-    df.residual = length(X) - ncol(mm) - 2,
+    n = length(Y),
+    df.residual = length(Y) - ncol(mm) - 2,
     converged = resultp3$convergence < 1,
     formula = formula,
     dist= 'ewp3'
@@ -120,6 +142,18 @@ vcov.ewp <- function(object, ...) {
 #'
 logLik.ewp <- function(object, ...) {
   structure(object$loglik, df = object$n - object$df.residual, nobs = object$n, class = "logLik")
+}
+
+#' Extract fitted values
+#'
+#' @param object an object of class ewp
+#' @param ... ignored
+#'
+#' @return
+#' @export
+#'
+fitted.zerotrunc <- function(object, ...) {
+  object$fitted.values
 }
 
 
@@ -222,6 +256,44 @@ print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
   }
 
   invisible(x)
+}
+
+
+#' Predict from fitted model
+#'
+#' @param object ewp model object
+#' @param newdata optional data.frame
+#' @param type character; default="response", no other type implemented
+#' @param na.action  defaults to na.pass()
+#' @param ... ignored
+#'
+#' @return a vector of predictions
+#' @export
+#'
+predict.ewp <- function(object, newdata, type = c("response"),
+                              na.action = na.pass, ...)
+{
+  type <- match.arg(type)
+
+  ## if no new data supplied
+  if(missing(newdata)) {
+    if(type != "response") {
+      stop('Unknown prediction type')
+    } else {
+      return(object$fitted.values)
+    }
+  } else {
+    mf <- model.frame(delete.response(object$terms), newdata, na.action = na.action, xlev = object$levels)
+    X <- model.matrix(delete.response(object$terms), mf)#, contrasts = object$contrasts)
+    offset <- if(!is.null(off.num <- attr(object$terms, "offset")))
+      eval(attr(object$terms, "variables")[[off.num + 1]], newdata)
+    else if(!is.null(object$offset)) eval(object$call$offset, newdata)
+    if(is.null(offset)) offset <- rep(0, NROW(X))
+  }
+
+  rval <- exp(X %*% object$coefficients[1:ncol(X)])[,1]
+
+  return(rval)
 }
 
 
