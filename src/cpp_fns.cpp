@@ -40,7 +40,7 @@ double W3(double beta1, double beta2, double lambda, int sum_limit = 30){
 // [[Rcpp::export]]
 Rcpp::NumericVector dewp3_cpp(Rcpp::IntegerVector x, double lambda, double beta1, double beta2){
   int n = x.size();
-  Rcout << "The receivec size of x : " << n << "\n";
+  //Rcout << "The receivec size of x : " << n << "\n";
   Rcpp::NumericVector res(n);
   for (int i=0; i<n; i++){
     res[i] = exp(-1 * lambda) * pow(lambda, x[i]) * w_k3(beta1, beta2, x[i], lambda)/(W3(beta1, beta2, lambda)*boost::math::factorial<double>(x[i]));
