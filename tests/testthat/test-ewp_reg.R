@@ -25,3 +25,10 @@ test_that("NA handling and dropped levels", {
   expect_s3_class(fit_na, "ewp")
 })
 
+test_that("in-formula transforms", {
+  set.seed(1234)
+  fit_na <- ewp_reg(eggs ~ scale(cov2), data = linnet)
+  expect_s3_class(fit_na, "ewp")
+})
+
+
