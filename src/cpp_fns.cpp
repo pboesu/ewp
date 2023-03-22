@@ -38,16 +38,48 @@ double W3(double beta1, double beta2, double lambda, int sum_limit = 30){
 //' @return a probability mass
 //' @export
 // [[Rcpp::export]]
-double dewp3_cpp(int x, double lambda, double beta1, double beta2){
-  return exp(-1 * lambda) * pow(lambda, x) * w_k3(beta1, beta2, x, lambda)/(W3(beta1, beta2, lambda)*boost::math::factorial<double>(x));
+Rcpp::NumericVector dewp3_cpp(Rcpp::IntegerVector x, double lambda, double beta1, double beta2){
+  int n = x.size();
+  Rcout << "The receivec size of x : " << n << "\n";
+  Rcpp::NumericVector res(n);
+  for (int i=0; i<n; i++){
+    res[i] = exp(-1 * lambda) * pow(lambda, x[i]) * w_k3(beta1, beta2, x[i], lambda)/(W3(beta1, beta2, lambda)*boost::math::factorial<double>(x[i]));
+  }
+  return res;
+}
+
+// non-vectorized form because I failed to understand how to recast Rcpp::Vector subsets
+// [[Rcpp::export]]
+double dewp3_cpp_nv(int x, double lambda, double beta1, double beta2){
+  //int n = x.size();
+  //Rcout << "The receivec size of x : " << n << "\n";
+  //Rcpp::NumericVector res(n);
+  //for (int i=0; i<n; i++){
+    //res[i] =
+    return exp(-1 * lambda) * pow(lambda, x) * w_k3(beta1, beta2, x, lambda)/(W3(beta1, beta2, lambda)*boost::math::factorial<double>(x));
+  //}
+  //return res;
 }
 
 
 // [[Rcpp::export]]
-double pllik3_part_cpp(Rcpp::NumericVector X, Rcpp::NumericVector lambda, double beta1, double beta2){
-  double ll = 0;
+double pllik3_part_cpp(Rcpp::IntegerVector X, Rcpp::NumericVector lambda, double beta1, double beta2){
+
+  Rcpp::NumericVector ll(X.size());
   for (int i = 0; i < X.size(); i++){
-    ll += log(dewp3_cpp(X[i],lambda[i],beta1,beta2));
+    // Rcout << "The value of i : " << i << "\n";
+    // Rcout << "The value of ll : " << ll << "\n";
+    // Rcout << "The value of X : " << X << "\n";
+    // Rcout << "The value of X[i] : " << X[i] << "\n";
+    //Rcout << "The size of X[i] : " << X[i].size() << "\n";
+    // Rcout << "Type of X" << typeid(X).name() << '\n';
+    // Rcout << "Type of X[i]" << typeid(X[i]).name() << '\n';
+    // Rcout << "The value of lambda : " << lambda << "\n";
+    // Rcout << "The value of lambda[i] : " << lambda[i] << "\n";
+    // Rcout << "Type of lambda[i]" << typeid(lambda[i]).name() << '\n';
+    //Rcout << "raw calc:" << dewp3_cpp(as<IntegerVector>(X[i]),lambda(i),beta1,beta2) << "\n";
+    ll[i] = log(dewp3_cpp_nv(X(i),lambda(i),beta1,beta2));//ugly? hack to force type conversion from Rcpp::NumericVector to std::double
+    //Rcout << "The value of ll : " << ll << "\n";
   }
-  return(-1*ll);
+  return(-1*sum(ll));
 }
