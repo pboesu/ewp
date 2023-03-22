@@ -11,7 +11,7 @@
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
 #' @param maxiter numeric maximum number of iterations for optim
 #'
-#' @return
+#' @return an ewp model
 #' @export
 #'
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
@@ -153,7 +153,7 @@ logLik.ewp <- function(object, ...) {
 #' @return
 #' @export
 #'
-fitted.zerotrunc <- function(object, ...) {
+fitted.ewp <- function(object, ...) {
   object$fitted.values
 }
 
@@ -325,6 +325,8 @@ predict.ewp <- function(object, newdata, type = c("response"),
 #' @param ... ignored
 #'
 #' @return a data frame with `nsim` columns with an attribute `"seed"`. If argument seed is NULL, the attribute is the value of .Random.seed before the simulation was started;
+#'
+#' @importFrom stats simulate
 #' @export
 #'
 simulate.ewp <- function(object, nsim=1, seed = NULL, ...){

@@ -33,7 +33,7 @@ ewp_reg(
 \item{maxiter}{numeric maximum number of iterations for optim}
 }
 \value{
-
+an ewp model
 }
 \description{
 Exponentially weighted poisson regression model
