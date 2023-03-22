@@ -4,7 +4,7 @@
 \alias{simulate.ewp}
 \title{simulate from fitted model}
 \usage{
-\method{simulate}{ewp}(object, nsim = 1, seed = NULL...)
+\method{simulate}{ewp}(object, nsim = 1, seed = NULL, ...)
 }
 \arguments{
 \item{object}{ewp model object}
