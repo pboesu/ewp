@@ -31,4 +31,12 @@ test_that("in-formula transforms", {
   expect_s3_class(fit_na, "ewp")
 })
 
-
+test_that("simulation method", {
+  fite <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)
+  sime <- simulate(fite, nsim = 1)
+  expect_s3_class(sime, "data.frame")
+  expect_equal(ncol(sime), 1)
+  sime3 <- simulate(fite, nsim = 3, seed = 1234)
+  expect_equal(ncol(sime3), 3)
+  expect_equal(attr(sime3, 'seed')[1], 1234)
+})

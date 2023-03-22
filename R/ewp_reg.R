@@ -315,3 +315,44 @@ predict.ewp <- function(object, newdata, type = c("response"),
 #   SE.logtheta <- NULL
 # }
 # colnames(vc) <- rownames(vc) <- colnames(X)
+
+
+#' simulate from fitted model
+#'
+#' @param object ewp model object
+#' @param nsim number of response vectors to simulate. Defaults to 1.
+#' @param seed either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see ‘Value’.
+#' @param ... ignored
+#'
+#' @return a data frame with `nsim` columns with an attribute `"seed"`. If argument seed is NULL, the attribute is the value of .Random.seed before the simulation was started;
+#' @export
+#'
+simulate.ewp <- function(object, nsim=1, seed = NULL, ...){
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+    runif(1)
+  if (is.null(seed))
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+  else {
+    R.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(seed)
+    RNGstate <- structure(seed, kind = as.list(RNGkind()))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+  }
+  ftd <- fitted(object)
+  n <- length(ftd)
+  ntot <- n * nsim
+
+  ncoef <- length(coef(object))
+  nm <- names(ftd)
+  val <- matrix(NA_integer_, nrow = n, ncol = nsim)
+  for (i in 1:nsim){
+    val[,i] <- vapply(ftd, function(x)rewp3(n = 1, lambda = x, beta1 = coef(object)[ncoef-1], beta2 = coef(object)[ncoef]), numeric(1))
+  }
+
+  val <- as.data.frame(val)
+  names(val) <- paste0("sim_", seq_len(nsim))
+  if (!is.null(nm))
+    row.names(val) <- nm
+  attr(val, "seed") <- RNGstate
+  val
+}

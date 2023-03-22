@@ -44,3 +44,25 @@ system.time(m2b <- ewp_reg(max_num_eggs~min_first_egg_scl + yearf + northing_scl
 system.time(m3 <- ewp_reg(max_num_eggs~min_first_egg + northing_scl, data = piedfly_s, hessian = FALSE))#hessian slowdown (unsurprisingly) caused by year factors - optimisation may not be stable for large sample sizes - maybe to do with parscale - maybe try Nelder-Mead instead?
 system.time(m3b <- ewp_reg(max_num_eggs~min_first_egg + northing_scl, data = piedfly_s, hessian = T))
 summary(m3b)
+
+
+#simulate methods
+fitp <- glm(eggs ~ cov1 + cov2, data = linnet, family=poisson)
+fitqp <- glm(eggs ~ cov1 + cov2, data = linnet, family=quasipoisson)
+fite <- ewp_reg(eggs ~ cov1 + cov2, data = linnet)
+coef(fitp)
+coef(fitqp)
+coef(fite)
+
+simp <- simulate(fitp, nsim = 10, seed = 1234)
+str(simp)
+simqp <- simulate(fitqp, nsim = 10, seed = 1234)
+sime <- simulate(fite, nsim = 1)
+
+sim_points <- function(sim, ...){
+  simt <- lapply(sime, table)
+  lapply(simt, function(x)points(as.numeric(names(x)),x,...))
+}
+
+hist(linnet$eggs)
+sim_points(sime, col = 'red', pch = 16)
