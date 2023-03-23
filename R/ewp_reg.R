@@ -34,7 +34,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
   Y <- model.response(mf, "numeric")
 
   if(any(Y >= 30)) ("Counts >= 30 detected. The likelihood estimation procedure is not currently set up to deal with this.")
-  if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 20 and beta2 near zero.")
+  if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 25 and beta2 < 1.")
 
 
 
@@ -99,7 +99,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     optim = resultp3,
     loglik = -resultp3$value,
     residuals = res,
-    fitted.values = Yhat,
+    fitted.values = as.vector(Yhat),
     terms = mt,
     call = cl,
     levels = .getXlevels(mt, mf),
