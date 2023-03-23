@@ -14,7 +14,7 @@
 \item{...}{additional arguments to printCoefmat()}
 }
 \value{
-
+printout of the summary object
 }
 \description{
 Print ewp model summary

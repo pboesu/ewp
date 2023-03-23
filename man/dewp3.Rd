@@ -16,7 +16,7 @@ dewp3(x, lambda, beta1, beta2)
 \item{beta2}{upper tail dispersion parameter}
 }
 \value{
-a probability mass
+a vector of probabilities
 }
 \description{
 Probability mass function of the three-parameter EWP

@@ -33,7 +33,7 @@ W3 = function(beta1, beta2, lambda, sum_limit = 30){
 #' @param lambda centrality parameter
 #' @param beta dispersion parameter
 #'
-#' @return
+#' @return a vector of probabilities
 #' @export
 #'
 dewp2 <- function(x, lambda, beta){
@@ -48,7 +48,7 @@ dewp2 <- function(x, lambda, beta){
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
 #'
-#' @return a probability mass
+#' @return a vector of probabilities
 #' @export
 #'
 dewp3 <- function(x, lambda, beta1, beta2){
@@ -65,6 +65,7 @@ dewp3 <- function(x, lambda, beta1, beta2){
 #' @param sum_limit largest integer to evaluate the PMF sum for ()
 #'
 #' @return random deviates from the EWP_3 distribution
+#' @importFrom stats runif
 #' @export
 #'
 rewp3 <- function(n, lambda, beta1, beta2, sum_limit = 30){#TODO:sum_limit should be a package option, and also there should be some way of automatically ensuring this is appropriate based on lambda and/or input data

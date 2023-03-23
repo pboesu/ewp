@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-
+a vector of coefficient values. Beware that the lambda parameters are on the log-link scale, whereas the betas are estimated using an identity link.
 }
 \description{
 Extract coefficients

@@ -12,6 +12,7 @@
 #' @param maxiter numeric maximum number of iterations for optim
 #'
 #' @return an ewp model
+#' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
@@ -31,6 +32,10 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
   ## model matrix, response
   mm <- model.matrix(formula, mf)
   Y <- model.response(mf, "numeric")
+
+  if(any(Y >= 30)) ("Counts >= 30 detected. The likelihood estimation procedure is not currently set up to deal with this.")
+  if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 20 and beta2 near zero.")
+
 
 
   #get start values for lambda linpred from simple poisson regression
@@ -114,7 +119,8 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
 #' @param object an object of class ewp
 #' @param ... ignored
 #'
-#' @return
+#' @return a vector of coefficient values. Beware that the lambda parameters are on the log-link scale, whereas the betas are estimated using an identity link.
+#' @importFrom stats coef
 #' @export
 #'
 coef.ewp <- function(object, ...) {
@@ -126,7 +132,8 @@ coef.ewp <- function(object, ...) {
 #' @param object an object of class ewp
 #' @param ... ignored
 #'
-#' @return
+#' @return a matrix
+#' @importFrom stats vcov
 #' @export
 #'
 vcov.ewp <- function(object, ...) {
@@ -138,7 +145,8 @@ vcov.ewp <- function(object, ...) {
 #' @param object an object of class ewp
 #' @param ... ignored
 #'
-#' @return
+#' @return a numeric
+#' @importFrom stats logLik
 #' @export
 #'
 logLik.ewp <- function(object, ...) {
@@ -150,7 +158,8 @@ logLik.ewp <- function(object, ...) {
 #' @param object an object of class ewp
 #' @param ... ignored
 #'
-#' @return
+#' @return a vector of fitted values on the response scale
+#' @importFrom stats fitted
 #' @export
 #'
 fitted.ewp <- function(object, ...) {
@@ -189,6 +198,8 @@ print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
 #' @param object ewp model fit
 #' @param ... ignored
 #'
+#' @importFrom stats pnorm
+#' @importFrom utils tail
 #' @export
 #'
 summary.ewp <- function(object,...)
@@ -226,7 +237,8 @@ summary.ewp <- function(object,...)
 #' @param digits number of digits to print
 #' @param ... additional arguments to printCoefmat()
 #'
-#' @return
+#' @return printout of the summary object
+#' @importFrom stats printCoefmat
 #' @export
 #'
 print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
@@ -269,6 +281,7 @@ print.summary.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
 #' @param ... ignored
 #'
 #' @return a vector of predictions
+#' @importFrom stats predict
 #' @export
 #'
 predict.ewp <- function(object, newdata, type = c("response"),

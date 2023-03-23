@@ -14,7 +14,7 @@ dewp2(x, lambda, beta)
 \item{beta}{dispersion parameter}
 }
 \value{
-
+a vector of probabilities
 }
 \description{
 Probability mass function of the two-parameter EWP

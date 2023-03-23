@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-
+a vector of fitted values on the response scale
 }
 \description{
 Extract fitted values

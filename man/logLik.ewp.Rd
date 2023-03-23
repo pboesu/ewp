@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-
+a numeric
 }
 \description{
 Extract log likelihood

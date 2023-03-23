@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-
+a matrix
 }
 \description{
 Extract estimated variance-covariance matrix
