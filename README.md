@@ -115,15 +115,46 @@ summary(fit)
 #> Log-likelihood: -4420 on 5 Df
 ```
 
+Simulation based residual diagnostics are indirectly available through
+the package [DHARMa](https://cran.r-project.org/package=DHARMa), by
+using the `simulate.ewp` method:
+
+``` r
+library(DHARMa)
+#> Warning: package 'DHARMa' was built under R version 4.2.2
+#> This is DHARMa 0.4.6. For overview type '?DHARMa'. For recent changes, type news(package = 'DHARMa')
+#simulate from fitted model
+sims <- simulate(fit, nsim = 20)
+
+#create a DHARMa abject
+DH <- createDHARMa(simulatedResponse = as.matrix(sims),#simulated responses
+                   observedResponse = linnet$eggs,#original response
+                   fittedPredictedResponse = fit$fitted.values,#fitted values from ewp model
+                   integerResponse = T)#tell DHARMa this is a discrete probability distribution
+
+#plot diagnostics
+plot(DH)
+#> DHARMa:testOutliers with type = binomial may have inflated Type I error rates for integer-valued distributions. To get a more exact result, it is recommended to re-run testOutliers with type = 'bootstrap'. See ?testOutliers for details
+```
+
+<img src="man/figures/README-residuals-1.png" width="100%" />
+
 :warning: **Note that the maximum likelihood optimisation procedure is
 still experimental**
 
-In particular:
-
--   Fitting is very slow (think minutes, not seconds), especially when
-    estimating the Hessian matrix for more than a couple of parameters!
--   Estimates may not be stable for models with many covariates and/or
-    very large sample sizes (1000s). centering and scaling continuous
-    covariates seems to help on that front.
+In particular:  
+- At the moment **the likelihood evaluation is optimised for small
+counts
+(![\\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda")
+\<\< 20) and uses a hard upper limit of 30 for potential counts**, this
+means the model is currently only suitable for datasets with expected
+counts up to 20-25, depending on the degree of underdispersion. A
+warning is issued if this criterion in not met when using `ewp_reg()`,
+but other functions may fail silently. - Fitting is very slow (think
+minutes, not seconds), especially when estimating the Hessian matrix for
+more than a couple of parameters! - Estimates may not be stable for
+models with many covariates and/or very large sample sizes (1000s).
+**Centering and scaling continuous covariates seems to help on that
+front.**
 
 :warning:

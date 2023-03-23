@@ -99,7 +99,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     optim = resultp3,
     loglik = -resultp3$value,
     residuals = res,
-    fitted.values = Yhat,
+    fitted.values = as.vector(Yhat),
     terms = mt,
     call = cl,
     levels = .getXlevels(mt, mf),
