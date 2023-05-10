@@ -82,7 +82,10 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
       vc <- resultp3$hessian <- matrix(NA_real_, nrow = ncol(mm) + 2, ncol = ncol(mm) + 2)
     } else {
       #estimate vcov
-      vc = solve(resultp3$hessian)
+      vc = try(solve(resultp3$hessian))
+      if (inherits(vc, 'try-error')){
+        vc <- resultp3$hessian <- matrix(NA_real_, nrow = ncol(mm) + 2, ncol = ncol(mm) + 2)
+      }
     }
 
   } else {
