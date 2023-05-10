@@ -77,9 +77,14 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
 
   if(hessian){
     if(verbose) cat('\nCalculating Hessian. This may take a while.\n')
-    resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, Y = Y)
-    #estimate vcov
-    vc = solve(resultp3$hessian)
+    try(resultp3$hessian <- optimHess(resultp3$par, fn = pllik3, mm = mm, Y = Y))
+    if (inherits(resultp3$hessian, 'try-error')){
+      vc <- resultp3$hessian <- matrix(NA_real_, nrow = ncol(mm) + 2, ncol = ncol(mm) + 2)
+    } else {
+      #estimate vcov
+      vc = solve(resultp3$hessian)
+    }
+
   } else {
     vc <- resultp3$hessian <- matrix(NA_real_, nrow = ncol(mm) + 2, ncol = ncol(mm) + 2)
   }
