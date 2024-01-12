@@ -7,18 +7,19 @@
 #' @param lambda centrality parameter
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
+#' @param sum_limit limit of sum for the normalizing factor
 #'
 #' @return a probability mass
 #' @export
-dewp3_cpp <- function(x, lambda, beta1, beta2) {
-    .Call(`_ewp_dewp3_cpp`, x, lambda, beta1, beta2)
+dewp3_cpp <- function(x, lambda, beta1, beta2, sum_limit) {
+    .Call(`_ewp_dewp3_cpp`, x, lambda, beta1, beta2, sum_limit)
 }
 
-dewp3_cpp_nv <- function(x, lambda, beta1, beta2) {
-    .Call(`_ewp_dewp3_cpp_nv`, x, lambda, beta1, beta2)
+dewp3_cpp_nv <- function(x, lambda, beta1, beta2, sum_limit) {
+    .Call(`_ewp_dewp3_cpp_nv`, x, lambda, beta1, beta2, sum_limit)
 }
 
-pllik3_part_cpp <- function(X, lambda, beta1, beta2) {
-    .Call(`_ewp_pllik3_part_cpp`, X, lambda, beta1, beta2)
+pllik3_part_cpp <- function(X, lambda, beta1, beta2, sum_limit) {
+    .Call(`_ewp_pllik3_part_cpp`, X, lambda, beta1, beta2, sum_limit)
 }
 

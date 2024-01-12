@@ -9,13 +9,14 @@
 #' @param method string, passed to optim, defaults to 'BFGS'
 #' @param hessian logical, defaults to TRUE; calculate Hessian?
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
-#' @param maxiter numeric maximum number of iterations for optim
+#' @param maxiter numeric, maximum number of iterations for optim
+#' @param sum_limit numeric, defaults to 30; upper limit for the sum used for the normalizing factor.
 #'
 #' @return an ewp model
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = 30){
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
@@ -62,7 +63,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     #  ll[i] = log(dewp3_cpp(Y[i],lambda[i],beta1,beta2))
     #}
     #return(-1*sum(ll))
-    return(pllik3_part_cpp(Y, lambda, beta1, beta2))
+    return(pllik3_part_cpp(Y, lambda, beta1, beta2,sum_limit))
   }
 
   resultp3 <- optim(par = start_values,

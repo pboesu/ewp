@@ -68,8 +68,8 @@ dewp3 <- function(x, lambda, beta1, beta2){
 #' @importFrom stats runif
 #' @export
 #'
-rewp3 <- function(n, lambda, beta1, beta2, sum_limit = 30){#TODO:sum_limit should be a package option, and also there should be some way of automatically ensuring this is appropriate based on lambda and/or input data
+rewp3 <- function(n, lambda, beta1, beta2, sum_limit = 100){#TODO:sum_limit should be a package option, and also there should be some way of automatically ensuring this is appropriate based on lambda and/or input data
     if(any(lambda >= sum_limit)) stop('sum_limit must be larger than lambda')
-    probs <- vapply(1:sum_limit, dewp3_cpp, numeric(1), lambda, beta1, beta2)
+    probs <- vapply(1:sum_limit, dewp3_cpp, numeric(1), lambda, beta1, beta2,sum_limit)
     sample(x = 1:sum_limit, n, replace = T, prob = probs)
 }

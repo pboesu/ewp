@@ -12,7 +12,8 @@ ewp_reg(
   method = "BFGS",
   hessian = TRUE,
   autoscale = TRUE,
-  maxiter = 500
+  maxiter = 500,
+  sum_limit = 30
 )
 }
 \arguments{
@@ -30,7 +31,9 @@ ewp_reg(
 
 \item{autoscale}{logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.}
 
-\item{maxiter}{numeric maximum number of iterations for optim}
+\item{maxiter}{numeric, maximum number of iterations for optim}
+
+\item{sum_limit}{numeric, defaults to 30; upper limit for the sum used for the normalizing factor.}
 }
 \value{
 an ewp model
