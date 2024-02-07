@@ -10,13 +10,13 @@
 #' @param hessian logical, defaults to TRUE; calculate Hessian?
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
 #' @param maxiter numeric, maximum number of iterations for optim
-#' @param sum_limit numeric, defaults to 30; upper limit for the sum used for the normalizing factor.
+#' @param sum_limit numeric, defaults to 2.5*; upper limit for the sum used for the normalizing factor.
 #'
 #' @return an ewp model
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = 30){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = round(max(Y)*2.5)){
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
@@ -38,6 +38,11 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
   if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 25 and beta2 < 1.")
 
 
+  # set a warning message if the sum_limit < 15. Occurs for small values of max count (<6), or when sum_limit is set manually.
+  if (sum_limit<15){
+    warning("sum_limit < 15 detected. A sum_limit of 2.5 times the maximum count value is recommended, or a sum_limit of
+            at least 15, in cases of small maximum counts.")
+  }
 
   #get start values for lambda linpred from simple poisson regression
   start_values <- coef(glm.fit(x = mm, y = Y, family = poisson()))

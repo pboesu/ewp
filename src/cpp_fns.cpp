@@ -19,12 +19,21 @@ double W_inner3(double beta1, double beta2, double k, double lambda){
   }
 
 
-double W3(double beta1, double beta2, double lambda, int sum_limit = 30){
-  double out = 0;
-  for (int i = 0; i < sum_limit+1; i++){
+//double W3(double beta1, double beta2, double lambda, int sum_limit = max(x)*2.5){
+//  double out = 0;
+//  for (int i = 0; i < sum_limit+1; i++){
+//    out += W_inner3(beta1, beta2, i,lambda);
+//  }
+//  return out;
+//}
+
+
+double W3(double beta1, double beta2, double lambda, int sum_limit){
+ double out = 0;
+ for (int i = 0; i < sum_limit+1; i++){
     out += W_inner3(beta1, beta2, i,lambda);
-  }
-  return out;
+ }
+ return out;
 }
 
 
