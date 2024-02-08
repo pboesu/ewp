@@ -40,8 +40,8 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
 
   # set a warning message if the sum_limit < 15. Occurs for small values of max count (<6), or when sum_limit is set manually.
   if (sum_limit<15){
-    warning("sum_limit < 15 detected. A sum_limit of 2.5 times the maximum count value is recommended, or a sum_limit of
-            at least 15, in cases of small maximum counts.")
+    warning("sum_limit < 15 detected. A sum_limit of 2.5 times the maximum count value is recommended, or of
+            at least 15, in the case of a small maximum count.")
   }
 
   #get start values for lambda linpred from simple poisson regression
