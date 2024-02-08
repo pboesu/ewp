@@ -13,7 +13,7 @@ ewp_reg(
   hessian = TRUE,
   autoscale = TRUE,
   maxiter = 500,
-  sum_limit = round(max(Y) * 2.5)
+  sum_limit = round(max(Y) * 3)
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ ewp_reg(
 
 \item{maxiter}{numeric, maximum number of iterations for optim}
 
-\item{sum_limit}{numeric, defaults to 2.5*; upper limit for the sum used for the normalizing factor.}
+\item{sum_limit}{numeric, defaults to 3*maximum count; upper limit for the sum used for the normalizing factor.}
 }
 \value{
 an ewp model
