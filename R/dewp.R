@@ -22,7 +22,7 @@ W_inner3 = function(beta1, beta2, k, lambda){
 }
 
 
-W3 = function(beta1, beta2, lambda, sum_limit = max(x)*2.5){
+W3 = function(beta1, beta2, lambda, sum_limit = max(x)*3){
   sum(W_inner3(beta1, beta2, 0:sum_limit,lambda))
 }
 
