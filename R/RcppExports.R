@@ -7,7 +7,7 @@
 #' @param lambda centrality parameter
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
-#' @param sum_limit limit of sum for the normalizing factor
+#' @param sum_limit summation limit for the normalizing factor
 #'
 #' @return a probability mass
 #' @export

@@ -15,7 +15,7 @@ dewp3_cpp(x, lambda, beta1, beta2, sum_limit)
 
 \item{beta2}{upper tail dispersion parameter}
 
-\item{sum_limit}{limit of sum for the normalizing factor}
+\item{sum_limit}{summation limit for the normalizing factor}
 }
 \value{
 a probability mass

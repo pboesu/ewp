@@ -1,45 +1,6 @@
 #likelihood functions
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
 
-w_k = function(beta, k, lambda){
-  exp(-beta*abs(k-lambda))
-}#EWP_2 weights
-
-W_inner = function(beta, k, lambda){
-  exp(-lambda)*lambda^k*w_k(beta, k, lambda)/factorial(k)
-}
-
-W = function(beta, lambda, sum_limit = 30){#TODO:
-  sum(W_inner(beta,0:sum_limit,lambda))
-}
-
-w_k3 = function(beta1, beta2, k, lambda){
-  ifelse(k <= lambda, exp(-beta1*(lambda-k)),exp(-beta2*(k-lambda)))
-}#EWP_3 weights
-
-W_inner3 = function(beta1, beta2, k, lambda){
-  exp(-lambda)*lambda^k*w_k3(beta1, beta2, k, lambda)/factorial(k)
-}
-
-
-W3 = function(beta1, beta2, lambda, sum_limit = max(x)*3){
-  sum(W_inner3(beta1, beta2, 0:sum_limit,lambda))
-}
-
-
-#' Probability mass function of the two-parameter EWP
-#'
-#' @param x vector of (positive integer) quantiles.
-#' @param lambda centrality parameter
-#' @param beta dispersion parameter
-#'
-#' @return a vector of probabilities
-#' @export
-#'
-dewp2 <- function(x, lambda, beta){
-  stopifnot(is.wholenumber(x))
-  exp(-lambda)*lambda^x*w_k(beta, k=x, lambda)/(W(beta, lambda)*factorial(x))
-}
 
 #' Probability mass function of the three-parameter EWP
 #'
@@ -47,13 +8,18 @@ dewp2 <- function(x, lambda, beta){
 #' @param lambda centrality parameter
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
+#' @param sum_limit summation limit for the normalizing factor
 #'
 #' @return a vector of probabilities
 #' @export
 #'
-dewp3 <- function(x, lambda, beta1, beta2){
+dewp3 <- function(x, lambda, beta1, beta2, sum_limit=max(x)*3){
   stopifnot(is.wholenumber(x))
-  exp(-lambda)*lambda^x*w_k3(beta1, beta2, k=x, lambda)/(W3(beta1, beta2, lambda)*factorial(x))
+  if (sum_limit<15){
+    warning("sum_limit < 15 detected. A sum_limit of 3 times the maximum count value is recommended, or of
+            at least 15, in the case of a small maximum count.")
+  }
+  return(dewp3_cpp(x, lambda, beta1, beta2, sum_limit))
 }
 
 #' Random samples from the three-parameter EWP
@@ -62,7 +28,7 @@ dewp3 <- function(x, lambda, beta1, beta2){
 #' @param lambda centrality parameter
 #' @param beta1 lower-tail dispersion parameter
 #' @param beta2 upper tail dispersion parameter
-#' @param sum_limit largest integer to evaluate the PMF sum for ()
+#' @param sum_limit summation limit for the normalizing factor
 #'
 #' @return random deviates from the EWP_3 distribution
 #' @importFrom stats runif

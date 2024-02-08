@@ -38,7 +38,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
   if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 25 and beta2 < 1.")
 
 
-  # set a warning message if the sum_limit < 15. Occurs for small values of max count (<6), or when sum_limit is set manually.
+  # set a warning message if the sum_limit < 15. Occurs for small values of max count (<5), or when sum_limit is set manually.
   if (sum_limit<15){
     warning("sum_limit < 15 detected. A sum_limit of 3 times the maximum count value is recommended, or of
             at least 15, in the case of a small maximum count.")
@@ -68,7 +68,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
     #  ll[i] = log(dewp3_cpp(Y[i],lambda[i],beta1,beta2))
     #}
     #return(-1*sum(ll))
-    return(pllik3_part_cpp(Y, lambda, beta1, beta2,sum_limit))
+    return(pllik3_part_cpp(Y, lambda, beta1, beta2, sum_limit))
   }
 
   resultp3 <- optim(par = start_values,
@@ -114,6 +114,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
     df.residual = length(Y) - ncol(mm) - 2,
     converged = resultp3$convergence < 1,
     formula = formula,
+    sum_limit=sum_limit,
     dist= 'ewp3'
   )
   class(out) <- "ewp"
