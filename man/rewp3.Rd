@@ -15,7 +15,7 @@ rewp3(n, lambda, beta1, beta2, sum_limit = 30)
 
 \item{beta2}{upper tail dispersion parameter}
 
-\item{sum_limit}{largest integer to evaluate the PMF sum for ()}
+\item{sum_limit}{summation limit for the normalizing factor}
 }
 \value{
 random deviates from the EWP_3 distribution

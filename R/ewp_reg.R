@@ -9,13 +9,14 @@
 #' @param method string, passed to optim, defaults to 'BFGS'
 #' @param hessian logical, defaults to TRUE; calculate Hessian?
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
-#' @param maxiter numeric maximum number of iterations for optim
+#' @param maxiter numeric, maximum number of iterations for optim
+#' @param sum_limit numeric, defaults to 3*maximum count; upper limit for the sum used for the normalizing factor.
 #'
 #' @return an ewp model
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BFGS', hessian = TRUE, autoscale = TRUE, maxiter = 500){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = round(max(Y)*3)){
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
@@ -37,6 +38,11 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
   if(any(Y > 20)) warning("Counts > 20 detected. The likelihood estimation procedure is not currently set up to deal with counts in excess of 30. Results may be misleading if lambda >= 25 and beta2 < 1.")
 
 
+  # set a warning message if the sum_limit < 15. Occurs for small values of max count (<5), or when sum_limit is set manually.
+  if (sum_limit<15){
+    warning("sum_limit < 15 detected. A sum_limit of 3 times the maximum count value is recommended, or of
+            at least 15, in the case of a small maximum count.")
+  }
 
   #get start values for lambda linpred from simple poisson regression
   start_values <- coef(glm.fit(x = mm, y = Y, family = poisson()))
@@ -62,7 +68,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     #  ll[i] = log(dewp3_cpp(Y[i],lambda[i],beta1,beta2))
     #}
     #return(-1*sum(ll))
-    return(pllik3_part_cpp(Y, lambda, beta1, beta2))
+    return(pllik3_part_cpp(Y, lambda, beta1, beta2, sum_limit))
   }
 
   resultp3 <- optim(par = start_values,
@@ -108,6 +114,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'BF
     df.residual = length(Y) - ncol(mm) - 2,
     converged = resultp3$convergence < 1,
     formula = formula,
+    sum_limit=sum_limit,
     dist= 'ewp3'
   )
   class(out) <- "ewp"

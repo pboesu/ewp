@@ -4,7 +4,7 @@
 \alias{dewp3}
 \title{Probability mass function of the three-parameter EWP}
 \usage{
-dewp3(x, lambda, beta1, beta2)
+dewp3(x, lambda, beta1, beta2, sum_limit = max(x) * 3)
 }
 \arguments{
 \item{x}{vector of (positive integer) quantiles.}
@@ -14,6 +14,8 @@ dewp3(x, lambda, beta1, beta2)
 \item{beta1}{lower-tail dispersion parameter}
 
 \item{beta2}{upper tail dispersion parameter}
+
+\item{sum_limit}{summation limit for the normalizing factor}
 }
 \value{
 a vector of probabilities
