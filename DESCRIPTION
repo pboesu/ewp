@@ -1,6 +1,6 @@
 Package: ewp
 Type: Package
-Title: An empirical model for underdispersed count data
+Title: An Empirical Model for Underdispersed Count Data
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Philipp",

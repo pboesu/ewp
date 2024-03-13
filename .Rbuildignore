@@ -6,3 +6,4 @@
 ^data-raw$
 ^sandbox$
 ^codecov\.yml$
+^cran-comments\.md$
