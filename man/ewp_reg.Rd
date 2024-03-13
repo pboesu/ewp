@@ -2,7 +2,7 @@
 % Please edit documentation in R/ewp_reg.R
 \name{ewp_reg}
 \alias{ewp_reg}
-\title{Exponentially weighted poisson regression model}
+\title{Exponentially weighted Poisson regression model}
 \usage{
 ewp_reg(
   formula,
@@ -39,5 +39,5 @@ ewp_reg(
 an ewp model
 }
 \description{
-Exponentially weighted poisson regression model
+Exponentially weighted Poisson regression model
 }

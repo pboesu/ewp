@@ -1,6 +1,6 @@
 #model functions
 
-#' Exponentially weighted poisson regression model
+#' Exponentially weighted Poisson regression model
 #'
 #' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #' @param family choice of "ewp2" or "ewp3"
@@ -340,7 +340,7 @@ predict.ewp <- function(object, newdata, type = c("response"),
 #'
 #' @param object ewp model object
 #' @param nsim number of response vectors to simulate. Defaults to 1.
-#' @param seed either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see ‘Value’.
+#' @param seed either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see "Value".
 #' @param ... ignored
 #'
 #' @return a data frame with `nsim` columns with an attribute `"seed"`. If argument seed is NULL, the attribute is the value of .Random.seed before the simulation was started;

@@ -11,7 +11,7 @@
 
 \item{nsim}{number of response vectors to simulate. Defaults to 1.}
 
-\item{seed}{either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see ‘Value’.}
+\item{seed}{either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see "Value".}
 
 \item{...}{ignored}
 }
