@@ -37,6 +37,7 @@ jobs:
           use-public-rspm: true
 
       - name: Install Boost
+        if: runner.os == 'Linux'
         run: sudo apt install libboost-all-dev
 
       - uses: r-lib/actions/setup-r-dependencies@v2
