@@ -16,7 +16,7 @@
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = round(max(Y)*3)){
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 5000, sum_limit = round(max(Y)*3)){
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
@@ -91,7 +91,6 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
   }
 
 
-  #TODO: rename coefficients to highlight lambda linpred? and/or separate mean and dispersion coefficients in output
 
   ## fitted and residuals
   Yhat = exp(mm %*% resultp3$par[1:ncol(mm)])

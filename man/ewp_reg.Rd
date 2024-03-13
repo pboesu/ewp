@@ -12,7 +12,7 @@ ewp_reg(
   method = "Nelder-Mead",
   hessian = TRUE,
   autoscale = TRUE,
-  maxiter = 500,
+  maxiter = 5000,
   sum_limit = round(max(Y) * 3)
 )
 }

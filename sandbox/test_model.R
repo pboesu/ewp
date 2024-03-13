@@ -10,7 +10,7 @@ W_inner = function(beta, k, lambda){
   exp(-lambda)*lambda^k*w_k(beta, k, lambda)/factorial(k)
 }
 
-W = function(beta, lambda, sum_limit = 30){#TODO:
+W = function(beta, lambda, sum_limit = 30){
   sum(W_inner(beta,0:sum_limit,lambda))
 }
 
