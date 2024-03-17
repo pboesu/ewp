@@ -10,9 +10,10 @@ Authors@R:
            comment = c(ORCID = "0000-0001-6723-6833")),
       person(given = "James",
            family = "Clarke",
-           role = "aut"
+           role = "aut",
+           comment = c(ORCID = " 0000-0003-1826-2060")
            ))
-Description: A minimal package implementing count regression models for underdispersed small counts (lambda < 20) based on the three-parameter exponentially weighted Poisson distribution of Ridout & Besbeas (2004) <DOI:10.1191/1471082X04st064oa>.
+Description: Count regression models for underdispersed small counts (lambda < 20) based on the three-parameter exponentially weighted Poisson distribution of Ridout & Besbeas (2004) <DOI:10.1191/1471082X04st064oa>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
