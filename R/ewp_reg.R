@@ -300,7 +300,14 @@ predict.ewp <- function(object, newdata, type = c("response"),
     if(type != "response") {
       stop('Unknown prediction type')
     } else {
-      return(object$fitted.values)
+      x <- seq(0,object[["sum_limit"]], by= 1)
+
+      pred_ewp <- vector()
+      for (i in 1:length(object$fitted.values)){
+        pmf_ewp <- dewp3(x, object$fitted.values[i], object$coefficients[["beta1"]],object$coefficients[["beta2"]])
+        pred_ewp[i] <- weighted.mean(x,w=(pmf_ewp))
+      }
+      return(pred_ewp)
     }
   } else {
     mf <- model.frame(delete.response(object$terms), newdata, na.action = na.action, xlev = object$levels)
@@ -313,7 +320,15 @@ predict.ewp <- function(object, newdata, type = c("response"),
 
   rval <- exp(X %*% object$coefficients[1:ncol(X)])[,1]
 
-  return(rval)
+  x <- seq(0,object[["sum_limit"]], by= 1)
+
+  pred_ewp <- vector()
+  for (i in 1:nrow(newdata)){
+    pmf_ewp <- dewp3(x, rval[i], object$coefficients[["beta1"]],object$coefficients[["beta2"]])
+    pred_ewp[i] <- weighted.mean(x, w=(pmf_ewp))
+  }
+
+  return(pred_ewp)
 }
 
 
