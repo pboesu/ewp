@@ -178,6 +178,7 @@ fitted.ewp <- function(object, ...) {
 #' @param x ewp model object
 #' @param digits digits to print
 #' @param ... ignored
+#' @returns a summary printout of the ewp model call and fitted coefficients.
 #'
 #' @export
 #'
@@ -186,7 +187,7 @@ print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
     dist <- x$dist
     fixed <- FALSE
 
-  #cat("\nCall:", deparse(x$call, width.cutoff = floor(getOption("width") * 0.85)), "", sep = "\n")
+  cat("\nCall:", deparse(x$call, width.cutoff = floor(getOption("width") * 0.85)), "", sep = "\n")
 
   if(!x$converged) {
     cat("model did not converge\n")
@@ -203,6 +204,7 @@ print.ewp <- function(x, digits = max(3, getOption("digits") - 3), ...)
 #'
 #' @param object ewp model fit
 #' @param ... ignored
+#' @return The function `summary.ewp` computes and returns a list of summary statistics of the fitted ewp model.
 #'
 #' @importFrom stats pnorm
 #' @importFrom utils tail

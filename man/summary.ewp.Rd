@@ -11,6 +11,9 @@
 
 \item{...}{ignored}
 }
+\value{
+The function `summary.ewp` computes and returns a list of summary statistics of the fitted ewp model.
+}
 \description{
 Model summary
 }

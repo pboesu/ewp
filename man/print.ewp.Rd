@@ -13,6 +13,9 @@
 
 \item{...}{ignored}
 }
+\value{
+a summary printout of the ewp model call and fitted coefficients.
+}
 \description{
 Print ewp model object
 }
