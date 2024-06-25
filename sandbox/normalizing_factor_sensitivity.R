@@ -16,7 +16,8 @@ for (i in 1:length(fix_sum)){
   ewp_vary[[i]]$sum_limit <- fix_sum[i]
 }
 
-ewp_reg(eggs~cov2,method='Nelder-Mead',data=linnet, sum_limit = 10)
+#try_ewp <- ewp_reg(eggs~cov2,method='Nelder-Mead',data=linnet, sum_limit = 25)
+#dewp3(linnet$eggs, lambda=4.88,beta1=1,beta2=3,sum_limit=10)
 
 #save(ewp_vary,file="sensitivity_NM.rda")
 
