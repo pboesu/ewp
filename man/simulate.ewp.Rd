@@ -4,19 +4,17 @@
 \alias{simulate.ewp}
 \title{simulate from fitted model}
 \usage{
-\method{simulate}{ewp}(object, nsim = 1, seed = NULL, ...)
+\method{simulate}{ewp}(object, nsim = 1, ...)
 }
 \arguments{
 \item{object}{ewp model object}
 
 \item{nsim}{number of response vectors to simulate. Defaults to 1.}
 
-\item{seed}{either NULL or an integer that will be used in a call to set.seed before simulating the response vectors. If set, the value is saved as the "seed" attribute of the returned value. The default, NULL will not change the random generator state, and return .Random.seed as the "seed" attribute, see ‘Value’.}
-
 \item{...}{ignored}
 }
 \value{
-a data frame with `nsim` columns with an attribute `"seed"`. If argument seed is NULL, the attribute is the value of .Random.seed before the simulation was started;
+a data frame with `nsim` columns.
 }
 \description{
 simulate from fitted model
