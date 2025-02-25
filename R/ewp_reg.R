@@ -17,11 +17,8 @@
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
-<<<<<<< HEAD
+
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = round(max(Y)*3), start_val=NULL){
-=======
-ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 5000, sum_limit = round(max(Y)*3)){
->>>>>>> d3f2914bb25f5c079e4fd10dce0ab0396ec0a265
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
