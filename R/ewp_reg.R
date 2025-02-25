@@ -11,12 +11,17 @@
 #' @param autoscale logical, defaults to TRUE; automatically scale model parameters inside the optimisation routine based on initial estimates from a Poisson regression.
 #' @param maxiter numeric, maximum number of iterations for optim
 #' @param sum_limit numeric, defaults to 3*maximum count; upper limit for the sum used for the normalizing factor.
+#' @param start_val list, defaults to fitting a Poisson regression; specify starting values
 #'
 #' @return an ewp model
 #' @importFrom stats .getXlevels coef delete.response glm.fit model.frame model.matrix model.response na.omit na.pass optim optimHess poisson terms
 #' @export
 #'
+<<<<<<< HEAD
+ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 500, sum_limit = round(max(Y)*3), start_val=NULL){
+=======
 ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Nelder-Mead', hessian = TRUE, autoscale = TRUE, maxiter = 5000, sum_limit = round(max(Y)*3)){
+>>>>>>> d3f2914bb25f5c079e4fd10dce0ab0396ec0a265
   cl <- match.call()
   mt <- terms(formula, data = data)
   #if(missing(data)) data <- environment(formula)
@@ -45,7 +50,12 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
   }
 
   #get start values for lambda linpred from simple poisson regression
-  start_values <- coef(glm.fit(x = mm, y = Y, family = poisson()))
+  if (is.null(start_val)){
+    start_values <- coef(glm.fit(x = mm, y = Y, family = poisson()))
+  } else{
+    start_values <- start_val
+  }
+
   #estimate relative effect sizes for optim - assumes dispersion parameter is approx 1!
   if (autoscale) {
      parscale_est = abs(c(start_values, beta1 = 1, beta2 = 1)/start_values[1])
@@ -106,6 +116,7 @@ ewp_reg <- function(formula, family = 'ewp3', data, verbose = TRUE, method = 'Ne
     residuals = res,
     fitted.values = as.vector(Yhat),
     terms = mt,
+    frame = data,
     call = cl,
     levels = .getXlevels(mt, mf),
     start = start_values,
@@ -328,7 +339,6 @@ predict.ewp <- function(object, newdata, type = c("response"),
     pmf_ewp <- dewp3(x, rval[i], object$coefficients[["beta1"]],object$coefficients[["beta2"]])
     pred_ewp[i] <- weighted.mean(x, w=(pmf_ewp))
   }
-
   return(pred_ewp)
 }
 
@@ -381,3 +391,109 @@ simulate.ewp <- function(object, nsim=1, ...){
     row.names(val) <- nm
   val
 }
+
+
+#' Estimate marginal means
+#'
+#' @param object ewp model object
+#' @param cov character; covariate to find marginal mean for
+#' @param ... ignored
+#'
+#' @return printout of the marginal means
+#' @export
+#'
+mmean <- function(object,cov,...){
+  levs= list()
+  conts = list()
+
+  coef_ewp = names(object$frame)
+  n_fac = length(object$levels)
+  facs = names(object$levels)
+  cont_var = intersect(names(object$coefficients),coef_ewp)
+  n_cont = length(cont_var)
+  n_terms = n_fac+n_cont
+  cov_cho = intersect(coef_ewp,cov)
+
+
+  if(is.factor(eval(parse(text=paste0("object$frame$",cov_cho))))==TRUE){
+
+    facs = union(cov_cho,facs)
+    full_term = union(facs,cont_var)
+
+
+    levs[[1]] = levels(eval(parse(text=paste0("object$frame$",cov_cho))))
+
+    if (n_fac>1){
+      for (i in 2:n_fac){
+        levs[[i]] = levels(eval(parse(text=paste0("object$frame$",facs[i]))))
+      }
+    }
+
+    if (n_cont>0){
+      for (i in (n_fac+1):n_terms){
+        levs[[i]] = mean(eval(parse(text=paste0("object$frame$",full_term[i]))))
+      }
+    }
+
+    RG = do.call("expand.grid",levs)
+
+    names(RG) = full_term
+    pred_mat = matrix(predict(object, newdata = RG), nrow = length(levs[[1]]))
+
+
+    emtab = data.frame(levs[[1]],
+                       mmean = apply(pred_mat, 1, mean))
+
+    colnames(emtab)[1] = cov
+
+    print(emtab,row.names = FALSE)
+
+  } else{
+
+    cont_var = union(cov_cho,cont_var)
+    full_term = union(cont_var,facs)
+
+
+    levs[[1]] = c(mean(eval(parse(text=paste0("object$frame$",cov_cho)))),mean(eval(parse(text=paste0("object$frame$",cov_cho))))+0.001)
+
+    if (n_cont>1){
+      for (i in 2:n_cont){
+        levs[[i]] = mean(eval(parse(text=paste0("object$frame$",cont_var[i]))))
+      }
+    }
+
+    if (n_fac>0){
+      for (i in (n_cont+1):n_terms){
+        levs[[i]] = levels(eval(parse(text=paste0("object$frame$",full_term[i]))))
+      }
+    }
+
+    RG = do.call("expand.grid",levs)
+
+
+    names(RG) = full_term
+
+    pred_mat = matrix(predict(object, newdata = RG), nrow = length(levs[[1]]))
+
+    if(n_fac>0){
+      fac_mean = vector()
+      for (i in 1:ncol(pred_mat)){
+        fac_mean[i] = (pred_mat[2,i]-pred_mat[1,i])/0.001
+      }
+
+      mmean_out = mean(fac_mean)
+
+    } else{
+      mmean_out = (pred_mat[2,1]-pred_mat[1,1])/0.001
+    }
+
+
+    emtab = data.frame(levs[[1]][1],
+                       mmean = mmean_out)
+
+    colnames(emtab)[1] = cov
+
+    print(emtab,row.names = FALSE)
+  }
+}
+
