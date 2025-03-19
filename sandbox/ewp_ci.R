@@ -30,6 +30,9 @@ ewp_ci <- function(object, data, nsamples=250, year=F){
     ci_up <- quantile(lambda_und, prob=0.975,na.rm=T)
 
     ci_out <- c(ci_low,ci_up)
+
+
+
   } else if (year==T){
     lambda_und <- list()
     #Yhat <- vector()

@@ -394,22 +394,34 @@ simulate.ewp <- function(object, nsim=1, ...){
 #'
 #' @param object ewp model object
 #' @param cov character; covariate to find marginal mean for
+#' @param ci  logical; whether or not to include confidence intervals, defaults to true
+#' @param nsamples  number of samples for use in obtaining the 95% confidence intervals, defaults to 250
 #' @param ... ignored
 #'
 #' @return printout of the marginal means
 #' @export
 #'
-mmean <- function(object,cov,...){
-  levs= list()
+
+mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
+
   conts = list()
 
   coef_ewp = names(object$frame)
+
   n_fac = length(object$levels)
+
   facs = names(object$levels)
+
   cont_var = intersect(names(object$coefficients),coef_ewp)
+
   n_cont = length(cont_var)
-  n_terms = n_fac+n_cont
+
+  n_terms=n_fac+n_cont
+
+  levs= vector(mode= "list", length=n_terms)
+
   cov_cho = intersect(coef_ewp,cov)
+
 
 
   if(is.factor(eval(parse(text=paste0("object$frame$",cov_cho))))==TRUE){
@@ -438,8 +450,64 @@ mmean <- function(object,cov,...){
     pred_mat = matrix(predict(object, newdata = RG), nrow = length(levs[[1]]))
 
 
-    emtab = data.frame(levs[[1]],
-                       mmean = apply(pred_mat, 1, mean))
+
+    if (ci==TRUE){    ################# CI method
+
+      resample_est <- mvtnorm::rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
+
+      ### Create model frame
+
+      mod_mat <- function(formula, data){
+        mf <- model.frame(formula, data, drop.unused.levels = T)
+        mm <- model.matrix(formula, mf)
+        return(mm)
+      }
+
+      mm_und <- mod_mat(formula=delete.response(object$terms), data=RG)
+
+      mmean_boot <-  vector(mode= "list", length=length(levs[[1]]))
+      #Yhat <- vector()
+      for (k in 1:nsamples){
+        Yhat <- exp(mm_und %*% resample_est[k,][1:ncol(mm_und)])
+
+        x <- seq(0,object[["sum_limit"]], by= 1)
+
+        pred_ewp <- vector()
+
+        for (j in 1:length(Yhat)){
+          pmf_ewp <- dewp3(x, Yhat[j], resample_est[k,][ncol(resample_est)-1], resample_est[k,][ncol(resample_est)])
+          pred_ewp[j] <- weighted.mean(x, w=(pmf_ewp))
+        }
+
+        pred_mat_boot = matrix(pred_ewp, nrow = length(levs[[1]]))
+
+        mmean_out_boot = apply(pred_mat_boot, 1, mean)
+
+        for (fac_lev in 1:length(levs[[1]])){
+          mmean_boot[[fac_lev]][k] <- mmean_out_boot[fac_lev]
+        }
+      }
+
+      ci_low <-  vector(mode= "numeric", length=length(levs[[1]]))
+      ci_up <-  vector(mode= "numeric", length=length(levs[[1]]))
+      for (fac_lev in 1:length(levs[[1]])){
+        ci_low[[fac_lev]] <- quantile(mmean_boot[[fac_lev]], prob=0.025,na.rm=T)
+        ci_up[[fac_lev]] <- quantile(mmean_boot[[fac_lev]], prob=0.975,na.rm=T)
+      }
+    }
+
+
+
+
+    if (ci==TRUE){
+      emtab = data.frame(levs[[1]],
+                         mmean = apply(pred_mat, 1, mean),
+                         lower.CL = ci_low,
+                         upper.CL = ci_up)
+    } else{
+      emtab = data.frame(levs[[1]],
+                         mmean = apply(pred_mat, 1, mean))
+    }
 
     colnames(emtab)[1] = cov
 
@@ -485,8 +553,70 @@ mmean <- function(object,cov,...){
     }
 
 
-    emtab = data.frame(levs[[1]][1],
-                       mmean = mmean_out)
+
+    if (ci==TRUE){    ################# CI method
+
+      resample_est <- mvtnorm::rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
+
+      ### Create model frame
+
+      mod_mat <- function(formula, data){
+        mf <- model.frame(formula, data, drop.unused.levels = T)
+        mm <- model.matrix(formula, mf)
+        return(mm)
+      }
+
+      mm_und <- mod_mat(formula=delete.response(object$terms), data=RG)
+
+      mmean_boot <-  vector(mode= "numeric", length=nsamples)
+      #Yhat <- vector()
+      for (k in 1:nsamples){
+        Yhat <- exp(mm_und %*% resample_est[k,][1:ncol(mm_und)])
+
+        x <- seq(0,object[["sum_limit"]], by= 1)
+
+        pred_ewp <- vector()
+
+        for (j in 1:length(Yhat)){
+          pmf_ewp <- dewp3(x, Yhat[j], resample_est[k,][ncol(resample_est)-1], resample_est[k,][ncol(resample_est)])
+          pred_ewp[j] <- weighted.mean(x, w=(pmf_ewp))
+        }
+
+        pred_mat_boot = matrix(pred_ewp, nrow = length(levs[[1]]))
+
+        if(n_fac>0){
+          fac_mean = vector()
+          for (i in 1:ncol(pred_mat_boot)){
+            fac_mean[i] = (pred_mat_boot[2,i]-pred_mat_boot[1,i])/0.001
+          }
+
+          mmean_out_boot = mean(fac_mean)
+
+        } else{
+          mmean_out_boot = (pred_mat_boot[2,1]-pred_mat_boot[1,1])/0.001
+        }
+
+        mmean_boot[k] <- mmean_out_boot
+      }
+
+
+
+      # }
+
+      ci_low <- quantile(mmean_boot, prob=0.025,na.rm=T)
+      ci_up <- quantile(mmean_boot, prob=0.975,na.rm=T)
+    }
+
+    if (ci==TRUE){
+      emtab = data.frame(levs[[1]][1],
+                         mmean = mmean_out,
+                         lower.CL = ci_low,
+                         upper.CL = ci_up)
+    } else{
+      emtab = data.frame(levs[[1]][1],
+                         mmean = mmean_out)
+    }
+
 
     colnames(emtab)[1] = cov
 

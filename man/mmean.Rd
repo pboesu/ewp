@@ -4,12 +4,16 @@
 \alias{mmean}
 \title{Estimate marginal means}
 \usage{
-mmean(object, cov, ...)
+mmean(object, cov, ci = TRUE, nsamples = 250, ...)
 }
 \arguments{
 \item{object}{ewp model object}
 
 \item{cov}{character; covariate to find marginal mean for}
+
+\item{ci}{logical; whether or not to include confidence intervals, defaults to true}
+
+\item{nsamples}{number of samples for use in obtaining the 95% confidence intervals, defaults to 250}
 
 \item{...}{ignored}
 }
