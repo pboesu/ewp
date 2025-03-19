@@ -24,7 +24,8 @@ LinkingTo:
     BH,
     Rcpp
 Imports: 
-    Rcpp
+    Rcpp,
+    mvtnorm
 Suggests: 
     covr,
     DHARMa,
