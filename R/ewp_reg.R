@@ -402,6 +402,7 @@ simulate.ewp <- function(object, nsim=1, ...){
 #'
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom stats quantile
+#' @importFrom stats weighted.mean
 #' @export
 #'
 
