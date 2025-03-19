@@ -394,7 +394,7 @@ simulate.ewp <- function(object, nsim=1, ...){
 #'
 #' @param object ewp model object
 #' @param cov character, covariate to find marginal mean for
-#' @param ci  logical, defaults to TRUE, whether or not to include confidence intervals,
+#' @param ci  logical, defaults to TRUE, whether or not to include confidence intervals
 #' @param nsamples numeric, defaults to 250, number of samples for use in obtaining the 95% confidence intervals
 #' @param ... ignored
 #'
@@ -402,7 +402,6 @@ simulate.ewp <- function(object, nsim=1, ...){
 #'
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom stats quantile
-#' @importFrom stats weighted.mean
 #' @export
 #'
 
@@ -457,7 +456,7 @@ mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
 
     if (ci==TRUE){    ################# CI method
 
-      resample_est <- mvtnorm::rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
+      resample_est <- rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
 
       ### Create model frame
 
@@ -470,7 +469,7 @@ mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
       mm_und <- mod_mat(formula=delete.response(object$terms), data=RG)
 
       mmean_boot <-  vector(mode= "list", length=length(levs[[1]]))
-      #Yhat <- vector()
+
       for (k in 1:nsamples){
         Yhat <- exp(mm_und %*% resample_est[k,][1:ncol(mm_und)])
 
@@ -560,7 +559,7 @@ mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
 
     if (ci==TRUE){    ################# CI method
 
-      resample_est <- mvtnorm::rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
+      resample_est <- rmvnorm(nsamples, mean=object[["coefficients"]],sigma=object[["vcov"]])
 
       ### Create model frame
 
@@ -573,7 +572,7 @@ mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
       mm_und <- mod_mat(formula=delete.response(object$terms), data=RG)
 
       mmean_boot <-  vector(mode= "numeric", length=nsamples)
-      #Yhat <- vector()
+
       for (k in 1:nsamples){
         Yhat <- exp(mm_und %*% resample_est[k,][1:ncol(mm_und)])
 
@@ -603,9 +602,6 @@ mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
         mmean_boot[k] <- mmean_out_boot
       }
 
-
-
-      # }
 
       ci_low <- quantile(mmean_boot, prob=0.025,na.rm=T)
       ci_up <- quantile(mmean_boot, prob=0.975,na.rm=T)
