@@ -9,11 +9,11 @@ mmean(object, cov, ci = TRUE, nsamples = 250, ...)
 \arguments{
 \item{object}{ewp model object}
 
-\item{cov}{character; covariate to find marginal mean for}
+\item{cov}{character, covariate to find marginal mean for}
 
-\item{ci}{logical; whether or not to include confidence intervals, defaults to TRUE}
+\item{ci}{logical, defaults to TRUE, whether or not to include confidence intervals,}
 
-\item{nsamples}{number of samples for use in obtaining the 95% confidence intervals, defaults to 250}
+\item{nsamples}{numeric, defaults to 250, number of samples for use in obtaining the 95% confidence intervals}
 
 \item{...}{ignored}
 }

@@ -393,12 +393,15 @@ simulate.ewp <- function(object, nsim=1, ...){
 #' Estimate marginal means
 #'
 #' @param object ewp model object
-#' @param cov character; covariate to find marginal mean for
-#' @param ci  logical; whether or not to include confidence intervals, defaults to TRUE
-#' @param nsamples  number of samples for use in obtaining the 95% confidence intervals, defaults to 250
+#' @param cov character, covariate to find marginal mean for
+#' @param ci  logical, defaults to TRUE, whether or not to include confidence intervals,
+#' @param nsamples numeric, defaults to 250, number of samples for use in obtaining the 95% confidence intervals
 #' @param ... ignored
 #'
 #' @return printout of the marginal means
+#'
+#' @importFrom mvtnorm rmvnorm
+#' @importFrom stats quantile
 #' @export
 #'
 
