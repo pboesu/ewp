@@ -394,7 +394,7 @@ simulate.ewp <- function(object, nsim=1, ...){
 #'
 #' @param object ewp model object
 #' @param cov character; covariate to find marginal mean for
-#' @param ci  logical; whether or not to include confidence intervals, defaults to true
+#' @param ci  logical; whether or not to include confidence intervals, defaults to TRUE
 #' @param nsamples  number of samples for use in obtaining the 95% confidence intervals, defaults to 250
 #' @param ... ignored
 #'
