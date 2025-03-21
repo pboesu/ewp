@@ -13,7 +13,7 @@ mmean(object, cov, ci = TRUE, nsamples = 250, ...)
 
 \item{ci}{logical, defaults to TRUE, whether or not to include confidence intervals}
 
-\item{nsamples}{numeric, defaults to 250, number of samples for use in obtaining the 95% confidence intervals}
+\item{nsamples}{numeric, defaults to 250, number of samples for use in obtaining the confidence intervals}
 
 \item{...}{ignored}
 }

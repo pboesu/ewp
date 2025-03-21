@@ -7,7 +7,7 @@ linnet$cov3 <- c("ARC","BLU")
 linnet$cov4 <- factor(round(linnet$cov2))
 linnet$cov3 <- factor(linnet$cov3)
 
-goon <- ewp::ewp_reg(eggs~cov1+cov3+cov4 ,data=linnet)
+ewp_fit <- ewp::ewp_reg(eggs~cov1 ,data=linnet)
 
 
 mean(linnet$cov1)
@@ -263,7 +263,7 @@ if (ci==TRUE){
 
 
 
-mmean(goon,"cov4",ci=TRUE)
+mmean(ewp_fit,"cov1")
 
 ewp_ci(goon,data=linnet)
 

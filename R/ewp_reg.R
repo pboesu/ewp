@@ -395,7 +395,7 @@ simulate.ewp <- function(object, nsim=1, ...){
 #' @param object ewp model object
 #' @param cov character, covariate to find marginal mean for
 #' @param ci  logical, defaults to TRUE, whether or not to include confidence intervals
-#' @param nsamples numeric, defaults to 250, number of samples for use in obtaining the 95% confidence intervals
+#' @param nsamples numeric, defaults to 250, number of samples for use in obtaining the confidence intervals
 #' @param ... ignored
 #'
 #' @return printout of the marginal means
@@ -405,7 +405,7 @@ simulate.ewp <- function(object, nsim=1, ...){
 #' @export
 #'
 
-mmean <- function(object,cov,ci=TRUE,nsamples=250,...){
+mmean <- function(object,cov,ci=TRUE,nsamples=250, ...){
 
   conts = list()
 
