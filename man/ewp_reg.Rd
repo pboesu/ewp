@@ -12,8 +12,9 @@ ewp_reg(
   method = "Nelder-Mead",
   hessian = TRUE,
   autoscale = TRUE,
-  maxiter = 5000,
-  sum_limit = round(max(Y) * 3)
+  maxiter = 500,
+  sum_limit = round(max(Y) * 3),
+  start_val = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ ewp_reg(
 \item{maxiter}{numeric, maximum number of iterations for optim}
 
 \item{sum_limit}{numeric, defaults to 3*maximum count; upper limit for the sum used for the normalizing factor.}
+
+\item{start_val}{list, defaults to fitting a Poisson regression; specify starting values}
 }
 \value{
 an ewp model
