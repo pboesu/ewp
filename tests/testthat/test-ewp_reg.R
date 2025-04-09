@@ -39,3 +39,5 @@ test_that("simulation method", {
   sime3 <- simulate(fite, nsim = 3)
   expect_equal(ncol(sime3), 3)
 })
+
+print(Sys.getenv('OMP_THREAD_LIMIT'))
