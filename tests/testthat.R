@@ -10,4 +10,4 @@ library(testthat)
 library(ewp)
 Sys.setenv("OMP_THREAD_LIMIT" = 2) #avoid excessive CPU use during CRAN checks
 test_check("ewp")
-print(Sys.getenv("OMP_THREAD_LIMIT"))
+

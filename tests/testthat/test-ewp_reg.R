@@ -40,4 +40,4 @@ test_that("simulation method", {
   expect_equal(ncol(sime3), 3)
 })
 
-print(Sys.getenv('OMP_THREAD_LIMIT'))
+#print(Sys.getenv('OMP_THREAD_LIMIT'))
